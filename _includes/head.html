@@ -1,0 +1,12 @@
+<nav class="navbar navbar-default">
+    <div class="container">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="/">Berserker's blog</a>
+            <ul class="nav navbar-nav">
+                {% for nav in site.data.navigation %}
+                    <li><a href="{{ nav.url | absolute_url }}">{{nav.title}}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</nav>

@@ -1,0 +1,29 @@
+---
+ layout: compress 
+---
+
+<!doctype html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="{{ "/styles/site.css" | absolute_url }}">
+</head>
+<body>
+    {% include head.html %}
+    <div class="container">
+        <div class="row">
+            {% assign content_size = 12 %}
+            {% unless page.layout == 'post' %}
+                {% assign content_size = 9 %}
+                {% include info.html %}
+            {% endunless %}
+            <div class="col-md-{{ content_size }} col-xs-12">
+                {{content}}
+            </div>
+        </div>
+    </div>
+    {% include footer.html %}
+    {% include analytics.html %}
+</body>
+
+</html>

@@ -1,0 +1,15 @@
+- type: Twitter
+  url: https://twitter.com/BerserkerDotNET
+  icon: social/twitter.png
+
+- type: GitHub
+  url: https://github.com/BerserkerDotNet
+  icon: social/github.png
+
+- type: LinkedIn
+  url: https://www.linkedin.com/in/andrii-snigyr-78b73a67/
+  icon: social/linkedin.png
+
+- type: Email
+  url: mailto:berserkerdotnet@gmail.com
+  icon: social/email.png

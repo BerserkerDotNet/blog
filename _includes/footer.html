@@ -5,10 +5,15 @@
             <a href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 Unported License.</a>            In other words, share generously but provide attribution.
         </p>
         <ul class="list-inline">
+           <li>
+                <a href="{{ "/feed.xml" | relative_url }}">
+                    <img src="{{ "assets/social/rss.png" | relative_url }}" width="24"/>
+                </a>
+            </li>
             {% for contact in site.data.contacts %}
                 <li>
-                    <a href="{{ contact.url}}">
-                        <img src="{{ "assets/" | append: contact.icon | absolute_url }}"/>
+                    <a href="{{ contact.url }}">
+                        <img src="{{ "assets/" | append: contact.icon | absolute_url }}" width="24" />
                     </a>
                 </li>
             {% endfor %}

@@ -54,21 +54,18 @@ This will not change the behavior of the app when running locally, but it will i
 </configuration>
 ```
 
-If you've created your application from 2.0 template, as I did, you will have `UseContentRoot(Directory.GetCurrentDirectory())` entry in `Program.cs`. This should be removed as it will cause the application to fail. The reason is that when hosting inside `w3wp` GetCurrentDirectory will return `C:\windows\system32\inetsrv` while the app is in the `C:\inetpub\wwwroot\InProcTest` so ANCM will not find your app and will complain with the status code of 500. The 2.1 app is smart enough to figure out its own location. :)
-
-`UseIISIntegration()` can also be removed as we are not going to proxy out app via IIS.
+If you've created your application from 2.0 template, as I did, you will have `UseContentRoot(Directory.GetCurrentDirectory())` entry in `Program.cs`. This should be removed as it will cause the application to fail. The reason is that when hosting inside `w3wp` GetCurrentDirectory will return `C:\windows\system32\inetsrv` while the app is in the `C:\inetpub\wwwroot\InProcTest` so ANCM will not find your app and will complain with the status code of 500. The 2.1 app is smart enough to figure out its own location anyway. :)
+`UseIISIntegration()` can also be removed as we are not going to reverse proxy via IIS.
 
 After this changes, run the app and it should load without issues.
 
-With this model, you can run only one app per IIS process. This is a decision that AspNet team made and also currently a limitation from .Net Core as it does not have support for multiple AppDomains.
+Side note, with this model, you can run only one app per IIS process. This is a decision that AspNet team made and also currently a limitation from .Net Core as it does not have support for multiple AppDomains.
 
 <blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">No, one app per process</p>&mdash; Damian Edwards (@DamianEdwards) <a href="https://twitter.com/DamianEdwards/status/969322206596493312?ref_src=twsrc%5Etfw">March 1, 2018</a></blockquote>
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
 <blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">Kinda, but even if it did, I&#39;m not sure we&#39;d do it. The gymnastics System.Web pulls to do that aren&#39;t really seen as idiomatic guidance anymore, i.e. each app should be in its own process.</p>&mdash; Damian Edwards (@DamianEdwards) <a href="https://twitter.com/DamianEdwards/status/969326928615190528?ref_src=twsrc%5Etfw">March 1, 2018</a></blockquote>
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-
-
 
 Happy hosting!
 

@@ -24,10 +24,12 @@ Installation of Windows Server Hosting bundle is pretty straight forward and qui
 For the installation of ANCM there is a PowerShell script written by [@shirhatti][3] that you can get from the [GitHub repository][5].
 Here is how you execute the script:
 ```powershell
-Invoke-WebRequest -Uri https://raw.githubusercontent.com/BerserkerDotNet/ANCM-ARMTemplate/master/install-ancm.ps1 -OutFile install-ancm.ps1
+Invoke-WebRequest -Uri https://raw.githubusercontent.com/shirhatti/ANCM-ARMTemplate/master/install-ancm.ps1 -OutFile install-ancm.ps1
 .\install-ancm.ps1
 ```
-Note, that here I point to the forked version of the script in my own repository. The reason is that the script version that is in the blog, didn't work for me right away. There was an error extracting files from the package, a small issue that I fixed in this [PR][4]. When or if it will be merged to the main repository I will update this post.
+**UPD:**
+The [PR][4] with a fix for the script was merged, so I updated the URL to take the version of the script from official repository.
+
 If the script executed successfully there should be an `AspNet Core Module` in the list of modules in IIS.
 
 ![ANCM]({{ "images/aspnet-core-2-1-inprocess-hosting/modules-list.png" | relative_url }} "ANCM in the ISS modules list")

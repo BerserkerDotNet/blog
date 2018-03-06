@@ -57,7 +57,10 @@ This will not change the behavior of the app when running locally, but it will i
 ```
 
 If you've created your application from 2.0 template, as I did, you will have `UseContentRoot(Directory.GetCurrentDirectory())` entry in `Program.cs`. This should be removed as it will cause the application to fail. The reason is that when hosting inside `w3wp` GetCurrentDirectory will return `C:\windows\system32\inetsrv` while the app is in the `C:\inetpub\wwwroot\InProcTest` so ANCM will not find your app and will complain with the status code of 500. The 2.1 app is smart enough to figure out its own location anyway. :)
-`UseIISIntegration()` can also be removed as we are not going to reverse proxy via IIS.
+
+**UPD:**
+Before, I mentioned that `UseIISIntegration()` can be removed from the `Program.cs` as it was not needed, this is not entirely correct.
+[@jkotalik][6] pointed out that `UseIISIntegration()` is still necessary for `InProcess` hosting as it will register IIS specific [services and options][8] and will set the [content root path][9] correctly. The good news it that [WebHost.CreateDefaultBuilder][7] will add `UseIISIntegration()` by default, so no need to add it in `Program.cs`.
 
 After this changes, run the app and it should load without issues.
 
@@ -76,3 +79,7 @@ Happy hosting!
 [3]: https://github.com/shirhatti
 [4]: https://github.com/shirhatti/ANCM-ARMTemplate/pull/5
 [5]: https://github.com/shirhatti/ANCM-ARMTemplate
+[6]: https://github.com/jkotalik
+[7]: https://github.com/aspnet/MetaPackages/blob/7511a4da7f1d1d9651d19801aadea77f557e0b11/src/Microsoft.AspNetCore/WebHost.cs#L185
+[8]: https://github.com/aspnet/IISIntegration/blob/4e8a9d24939ae41c862dcabc5c07330fb4991727/src/Microsoft.AspNetCore.Server.IISIntegration/WebHostBuilderIISExtensions.cs#L61-L69
+[9]: https://github.com/aspnet/IISIntegration/blob/4e8a9d24939ae41c862dcabc5c07330fb4991727/src/Microsoft.AspNetCore.Server.IISIntegration/WebHostBuilderIISExtensions.cs#L58

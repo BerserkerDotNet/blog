@@ -13,7 +13,7 @@ tags:
 - razor
 - sections
 - MVC
-modified_time: '2018-03-24T10:00:00.000-07:00'
+modified_time: '2018-03-25T10:00:00.000-07:00'
 ---
 Razor [sections][3]{:target="_blank"} allows us to write a block of code in one view and render it later in another. The typical example would be the `scripts` section that takes a script block from the page and renders it in the layout after all common scripts. This works fine until you try to use `sections` from the partial view or from the display template.
 <!--more-->
@@ -27,34 +27,115 @@ I quickly remembered that I came across somewhat similar problem back in 2015 wh
 
 #### Will tag helpers help?
 [Tag Helpers][1]{:target="_blank"} is an adequate addition to the Razor markup. In essence, they meant to replace HtmlHelper class with the more robust way of combining C# and Html. Here is a simple example of a tag helper:
-<script src="https://gist.github.com/BerserkerDotNet/7daa1b1c950c837f90e848558c077679.js"></script>
+<p>
+  <script src="https://gist.github.com/BerserkerDotNet/7daa1b1c950c837f90e848558c077679.js"></script>
+  <noscript>
+    <pre>
+&#x3C;form asp-page-handler=&#x22;Report&#x22; method=&#x22;post&#x22;&#x3E;
+  @* form markup *@
+&#x3C;/form&#x3E;
+    </pre>
+  </noscript>
+</p>
 The tag helper part is in `asp-page-handler` attribute that is added to the `form` html tag. This attribute is a hint to the Razor engine that this tag needs additional processing. The final result will look like this:
-<script src="https://gist.github.com/BerserkerDotNet/a435a76c51ae5a1cb5437aa34c3d20d8.js"></script>
+<p>
+  <script src="https://gist.github.com/BerserkerDotNet/a435a76c51ae5a1cb5437aa34c3d20d8.js"></script>
+  <noscript>
+    <pre>
+&#x3C;form method=&#x22;post&#x22; action=&#x22;/?handler=Report&#x22;&#x3E;
+  // form markup
+&#x3C;/form&#x3E;
+    </pre>
+  </noscript>
+</p>
 Tag helpers are an ideal solution in this case, as they are easy to use, elegant and certainly AspNet Core friendly. In fact, I think, it is hard to find a solution that would be easier to use, since it is literally just adding an attribute to an html tag.
 To solve this, there need to be two tag helpers, one that will capture the script block and the second one that will render it.
 
 #### Script Capture Tag Helper
 Authoring custom tag helpers is remarkably easy, it can be done in three steps. The first step is to create a class that inherits base `TagHelper` class. Second, is to mark this class with `HtmlTargetElement` attribute specifying what html element to target, in this case, it is `script`, and which attributes to look for. This is needed for Razor to know when to apply tag helper. The third step is to override `Process` or `ProcessAsync` methods that will hold a tag helper logic.
-<script src="https://gist.github.com/BerserkerDotNet/41e92b53874caa11fd1dba7b593172aa.js"></script>
+<p>
+  <script src="https://gist.github.com/BerserkerDotNet/41e92b53874caa11fd1dba7b593172aa.js"></script>
+  <noscript>
+    <pre>
+[HtmlTargetElement("script", Attributes = "capture")]
+public class ScriptCaptureTagHelper : TagHelper
+{
+    /// <summary>
+    /// Unique id of the script block
+    /// </summary>
+    [HtmlAttributeName("capture")]
+    public string Capture { get; set; }
+
+    [ViewContext]
+    [HtmlAttributeNotBound]
+    public ViewContext ViewContext { get; set; }
+
+    public override async Task ProcessAsync(TagHelperContext context, TagHelperOutput output)
+    {
+        // Actual code that will capture the script
+    }
+}
+    </pre>
+  </noscript>
+</p>
 Tag helper can bind attribute value to a C# property, this is done by marking the property with `HtmlAttributeName` and specifying attribute name. In the example above there is "Capture" property being bind to the corresponding html attribute.
 If `ViewContext` instance needs to be accessed by the tag helper, it is done by adding a property to a tag helper class and decorating it with "ViewContext" attribute. this is specially injected as it needs to represent the current instance of the "ViewContext", other dependencies can be injected through normal dependency injection.
 The content of the tag can be accessed through the `output.GetChildContentAsync` method, it returns an instance of `TagHelperContent`, to get a string representation of a content, `GetContent` method of `TagHelperContent` needs to be called. Since the content of the script block is captured for future rendering, it cannot be left as is, because it will be rendered in the middle of a page. To prevent this `output.SuppressOutput` method needs to be called.
-
-<script src="https://gist.github.com/BerserkerDotNet/69806b9d25c1371e4021be23da880e79.js"></script>
+<p>
+  <script src="https://gist.github.com/BerserkerDotNet/69806b9d25c1371e4021be23da880e79.js"></script>
+  <noscript>
+    <pre>
+var content = await output.GetChildContentAsync();
+var key = $"Script_{Capture}";
+ViewContext.HttpContext.Items.Add(key, capture);
+output.SuppressOutput();
+    </pre>
+  </noscript>
+</p>
 Here I store captured content in `HttpContext.Items` dictionary using `capture` attribute value as a key.
 This is simplified implementation, complete implementation can be found at [ScriptCaptureTagHelper.cs][9]
 
 #### Script Render Tag Helper
 Similar to capture tag helper, render tag helper is implemented in its own class that inherits from base `TagHelper` class, but instead of storing current content it reads the value from `HttpContext.Items` dictionary, using the same key value and calls `SetHtmlContent` on the output object:
-<script src="https://gist.github.com/BerserkerDotNet/0e0f0ea73b156e63640f0f660da7fd52.js"></script>
+<p>
+  <script src="https://gist.github.com/BerserkerDotNet/0e0f0ea73b156e63640f0f660da7fd52.js"></script>
+  <noscript>
+    <pre>
+var key = $"Script_{Render}";
+var content = ViewContext.HttpContext.Items[key].ToString();
+output.Content.SetHtmlContent(content);
+    </pre>
+  </noscript>
+</p>
 This is simplified implementation, complete implementation can be found at [ScriptRenderTagHelper.cs][10]
 
 #### Using it
 `@addTagHelper *, ScriptCaptureTagHelper` needs to be added to the `_ViewImports.cshtml` file to register tag helpers. `ScriptCaptureTagHelper` is the name of the assembly where tag helpers are located.
 To actually use tag helpers add a `capture` tag on the script block in the display template or in the partial view.
-<script src="https://gist.github.com/BerserkerDotNet/7e2503e1080262b7c6f91c800664a673.js"></script>
+<p>
+  <script src="https://gist.github.com/BerserkerDotNet/7e2503e1080262b7c6f91c800664a673.js"></script>
+  <noscript>
+    <pre>
+&#x3C;script capture=&#x22;@nameof(ReportResult)&#x22;&#x3E;
+    function createChart() {
+      // TODO: create a chart
+    }
+
+    $(document).ready(function () { createChart(); });
+&#x3C;/script&#x3E;
+    </pre>
+  </noscript>
+</p>
 In the view where the script needs to be rendered, add an empty `script` tag with the `render` attribute, specifying the same id as for `capture` attribute.
-<script src="https://gist.github.com/BerserkerDotNet/6880d7bc609c0f8d7e53df46ee84908a.js"></script>
+<p>
+  <script src="https://gist.github.com/BerserkerDotNet/6880d7bc609c0f8d7e53df46ee84908a.js"></script>
+  <noscript>
+    <pre>
+&#x3C;script render=&#x22;@nameof(ReportResult)&#x22;&#x3E;
+&#x3C;/script&#x3E;
+    </pre>
+  </noscript>
+</p>
 
 #### Where can I get it
 The complete implementation is available on the [ScriptCaptureTagHelper GitHub][11] page. Also, there is a [ScriptCaptureTagHelper][12] NuGet package available for download.

@@ -58,7 +58,7 @@ In the view where the script needs to be rendered, add an empty `script` tag wit
 
 #### Where can I get it
 The complete implementation is available on the [ScriptCaptureTagHelper GitHub][11] page. Also, there is a [ScriptCaptureTagHelper][12] NuGet package available for download.
-Complete implementation has more features then just capturing single script block. IT allows capture of multiple blocks under ther same ID with ordering and preserves attributes, which makes possible to capture script reference tag.
+Complete implementation has more features then just capturing single script block. It allows capture of multiple blocks under ther same ID with ordering and preserves attributes, which makes possible to capture script reference tag.
 
 Happy coding :)
 

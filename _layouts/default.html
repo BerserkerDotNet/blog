@@ -3,12 +3,22 @@
 ---
 
 <!doctype html>
-<html>
-
+<html lang="en">
 <head>
-    <link rel="stylesheet" href="{{ "/styles/site.css" | absolute_url }}">
-    <title>{{ page.title }}</title>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% if page.title %}
+        <title>{{ page.title }} - Andrii Snihyr</title>
+        <meta name="title" content="{{ page.title }} - Andrii Snihyr" />
+    {% else %}
+        <title>Berserker's blog - Andrii Snihyr</title>
+        <meta name="title" content="Berserker's blog - Andrii Snihyr" />
+    {% endif %}
+    <meta name="description" content="Andrii Snihyr blog on programming" />
+    <meta name="keywords" content="Computer, C#, .NET, WCF, UWP, ASP.NET" />
     <meta name="author" content="Andrii Snihyr">
+    <meta name="application-name" content="Andrii Snihyr's Blog"/>
+    <link rel="stylesheet" href="{{ "/styles/site.css" | absolute_url }}">
 </head>
 <body>
     {% include head.html %}

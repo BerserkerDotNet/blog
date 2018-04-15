@@ -2,14 +2,14 @@
     <ul class="list-group">
         <li class="list-group-item">
             <div class="text-center">
-                <img class="img-circle" src="{{ "assets/logo.jpg" | absolute_url }}" width="200" />
+                <img class="img-circle" src="{{ "assets/logo.jpg" | absolute_url }}" width="200" alt="Logo image" />
                 <p class="">Lead software engineer at <a href="https://www.globallogic.com/">GlobalLogic</a></p>
             </div>
         </li>
         {% for contact in site.data.contacts %}
             <li class="list-group-item">
-                <a href="{{ contact.url}}">
-                    <img src="{{ "assets/" | append: contact.icon | absolute_url }}"/>
+                <a href="{{ contact.url}}" aria-label="{{ contact.type }} page">
+                    <img src="{{ "assets/" | append: contact.icon | absolute_url }}" alt="{{ contact.type }} page"/>
                     <span>{{ contact.type }}</span>
                 </a>
             </li>

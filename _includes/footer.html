@@ -6,14 +6,14 @@
         </p>
         <ul class="list-inline">
            <li>
-                <a href="{{ "/feed.xml" | relative_url }}">
-                    <img src="{{ "assets/social/rss.png" | relative_url }}" width="24"/>
+                <a href="{{ "/feed.xml" | relative_url }}" aria-label="RSS feed">
+                    <img src="{{ "assets/social/rss.png" | relative_url }}" width="24" alt="Subscribe to RSS feed" />
                 </a>
             </li>
             {% for contact in site.data.contacts %}
                 <li>
-                    <a href="{{ contact.url }}">
-                        <img src="{{ "assets/" | append: contact.icon | absolute_url }}" width="24" />
+                    <a href="{{ contact.url }}" aria-label="{{ contact.type }} page">
+                        <img src="{{ "assets/" | append: contact.icon | absolute_url }}" width="24" alt="{{ contact.type }} page" />
                     </a>
                 </li>
             {% endfor %}

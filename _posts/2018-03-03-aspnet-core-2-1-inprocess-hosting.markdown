@@ -16,7 +16,7 @@ The AspNet Core 2.1-preview1 is out and it brings a ton of interesting improveme
 <!--more-->
 ["Improvements to IIS hosting"][1] blog post from AspNet team lists steps needed to change your app hosting model. To my surprise there is only three of them:
 1. Install [Windows Server Hosting bundle][2]
-2. Install AspNet Core Module (ANCM) module for ISS
+2. Install AspNet Core Module (ANCM) module for IIS
 3. Set `AspNetCoreModuleHostingModel` to `inprocess` in your project file.
 
 Installation of Windows Server Hosting bundle is pretty straight forward and quite fast, I didn't encounter any issues with it. One note here is that it is recommended to do `iisreset` after this step.
@@ -38,7 +38,7 @@ The [PR][4] with a fix for the script was merged, so I updated the URL to take t
 
 If the script executed successfully there should be an `AspNet Core Module` in the list of modules in IIS.
 
-![ANCM]({{ "images/aspnet-core-2-1-inprocess-hosting/modules-list.png" | relative_url }} "ANCM in the ISS modules list")
+![ANCM]({{ "images/aspnet-core-2-1-inprocess-hosting/modules-list.png" | relative_url }} "ANCM in the IIS modules list")
 
 Since this is a `Native` module the app pool can stay with "No managed code" option for CLR version.
 
